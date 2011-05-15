@@ -1,38 +1,93 @@
-<!DOCTYPE HTML> 
-<html lang="en"> 
-	<head> 
-		<title>three.js webgl - interactive - voxel painter</title>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<title>iBuild - Location Based Service for Buildings</title>
+		<link rel="stylesheet" href="style.css" type="text/css" />
 		<script type="text/javascript" src="javascripts/Three.js"></script> 
  
 		<script type="text/javascript" src="javascripts/Detector.js"></script> 
 		<script type="text/javascript" src="javascripts/RequestAnimationFrame.js"></script> 
-		<script type="text/javascript" src="javascripts/Stats.js"></script> 
+		<script type="text/javascript" src="javascripts/Stats.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
 		
-		<style type="text/css"> 
-			body {
-				font-family: Monospace;
-				background-color: #f0f0f0;
-				margin: 0px;
-				overflow: hidden;
-			}
-
-			#oldie { background-color: #ddd !important }
-		</style>
-	</head> 
+		
+	</head>
+	
 	<body>
+		<div id="wrapper">
+			<div id="header">
+				<a href="#" id="logo"><img src="images/logo.png" alt="logo" /></a>
+				<img src="images/delim.png" alt="delim" id="delim" />
+				
+				<ul id="nav">
+					<li class="active">
+						<a href="#">Dashboard</a>
+					</li>
+					<li>
+						<a href="#">History</a>
+					</li>
+					<li class="delim">
+						<img src="images/delim_mic.png" alt="Delim" />
+					</li>
+					<li class="zoom_in btn">
+						<a href="#">Zoom in</a>
+					</li>
+					<li class="delim">
+						<img src="images/delim_mic.png" alt="Delim" />
+					</li>
+					<li class="zoom_out btn">
+						<a href="#">Zoom Out</a>
+					</li>
+					<li class="delim">
+						<img src="images/delim_mic.png" alt="Delim" />
+					</li>
+					<li class="move btn">
+						<a href="#">Move</a>
+					</li>
+					<li class="delim">
+						<img src="images/delim_mic.png" alt="Delim" />
+					</li>
+					<li class="waypoint btn">
+						<a href="#">Waypoints</a>
+					</li>
+				</ul>
+				
+				<ul id="nav_right">
+					<li id="arrow">
+						<img src="images/arrow.png" alt="Arrow" />
+					</li>
+				</ul>
+				
+			</div>
+			<div id="contents">
+				<img src="images/dashboard_tag.png" alt="dashboard" id="dashboard"/>
+				
+				<div id="miezu">
+					<div id="centrului">
+					</div>
+				</div>
+				
+				<div id="people">
+				  
+				</div>
+				
+				<div id="clearboth">
+				</div>
+			</div>
+		</div>
 		<script type="text/javascript"> 
 		  if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 		  
 		  var isInteracting = false;
 		  var movingLocationStart  = new THREE.Vector3(), movingLocationStop = new THREE.Vector3();
-
+		  var wayPoint = false;
 		  
 		  container = document.createElement('div');
-		  document.body.appendChild(container);
+		  document.getElementById("centrului").appendChild(container);
 		  
 		  var voxelPosition = new THREE.Vector3(), tmpVec = new THREE.Vector3();
       camera = new THREE.QuakeCamera( {
-       fov: 60, aspect: window.innerWidth / window.innerHeight, near: 1, far: 20000,
+       fov: 60, aspect: 725 / 530, near: 1, far: 20000,
        movementSpeed: 250, lookSpeed: 0.05, noFly: false, lookVertical: true
       } );
 		  //camera = new THREE.Camera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -47,7 +102,7 @@
 		  var ray = new THREE.Ray( camera.position, null );
 		  
       // // containing dome
-      mesh = new THREE.Mesh( new THREE.Sphere( 10000, 60, 40 ), new THREE.MeshBasicMaterial( { color: 0xAAAAAA } ) );
+      mesh = new THREE.Mesh( new THREE.Sphere( 10000, 60, 40 ), new THREE.MeshBasicMaterial( { color: 0xebebeb } ) );
       mesh.scale.x = -1;
       scene.addObject( mesh );
 		  
@@ -138,21 +193,75 @@
       scene.addObject( plane_oxy );
       
       renderer = new THREE.WebGLRenderer( { antialias: true } );
-      renderer.setSize(window.innerWidth, window.innerHeight );
+      renderer.setSize(725, 530 );
       container.appendChild( renderer.domElement );
       
-      var windowHalfX = window.innerWidth / 2;
-      var windowHalfY = window.innerHeight / 2;
+      var a = document.getElementById("centrului");
+      var tmp = document.defaultView.getComputedStyle(a, "");
+      var windowHalfX = tmp.getPropertyValue("width").slice(0,3) / 2;
+      var windowHalfY = tmp.getPropertyValue("height").slice(0,3) / 2;
       
       stats = new Stats();
       stats.domElement.style.position = 'absolute';
       stats.domElement.style.top = '0px';
+      stats.domElement.style.left = '0px';
       container.appendChild( stats.domElement );
       
       animate();
       document.addEventListener( 'mousemove', onDocumentMouseMove, false );
       document.addEventListener( 'mousedown', onDocumentMouseDown, false );
       document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+      document.addEventListener( 'keyup', onDocumentKeyUp, false );
+      document.addEventListener( 'keydown', onDocumentKeyDown, false );
+      
+      var ePressed = false;
+      var xPressed = false;
+      var zPressed = false;
+      
+      function onDocumentKeyUp(event){
+        if(event.keyCode == 87){
+          zPressed = false;
+          $(".zoom_in").removeClass("zoom_in_c")
+        }
+        if(event.keyCode == 83){
+          xPressed = false;
+           $(".zoom_out").removeClass("zoom_out_c");
+        }
+      }
+      
+      function onDocumentKeyDown(event){
+        
+        
+        if(event.keyCode == 69){
+          if(ePressed == true){
+            ePressed = false;
+            $(".waypoint").removeClass("waypoint_c");
+      			cubGeo = new THREE.Cube( 50, 50, 50 );
+
+      			cubMaterial = new THREE.MeshBasicMaterial( { color: 0xffcc99 } );
+      			 cubMesh = new THREE.Mesh( rollOverGeo, cubMaterial );
+
+          }else{
+            ePressed = true;
+            
+            $(".waypoint").addClass("waypoint_c");
+            cubGeo = new THREE.Cube( 50, 50, 50 );
+
+      			cubMaterial = new THREE.MeshBasicMaterial( { color: 0xff00ff } );
+      			cubMesh = new THREE.Mesh( rollOverGeo, cubMaterial );
+      			
+          }
+          
+        }
+        if(event.keyCode == 87){
+          zPressed = true;
+          $(".zoom_in").addClass("zoom_in_c");
+        }
+        if(event.keyCode == 83){
+          xPressed = true;
+          $(".zoom_out").addClass("zoom_out_c");
+        }
+      }
 
       function onDocumentMouseDown(event){
         console.log("A");        console.log("A")
@@ -169,19 +278,29 @@
         event.preventDefault();
         isInteracting = false;
 
-  			cubMesh = new THREE.Mesh( rollOverGeo, cubMaterial );
-  			rollOverMesh.position.y = 25;
+  			
+  			
+  			
+  			  cubMesh = new THREE.Mesh( rollOverGeo, cubMaterial );  
+  			  rollOverMesh.position.y = 25;
+  			  
 
-        cubAdded = false;
+  			cubAdded = false;
+
+
+        
       }
       
       
       function onDocumentMouseMove( event ) {
-
+          var evX = event.clientX;
+          var evY = event.clientY;
   				event.preventDefault();
+
+  				mouse2D.x = ( evX / tmp.getPropertyValue("width").slice(0,3) ) * 2 - 1-0.4;
+  				mouse2D.y = - (evY / tmp.getPropertyValue("height").slice(0,3) ) * 2 + 1+0.4;
   				
-  				mouse2D.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-  				mouse2D.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  				
   				
   				movingLocationStop.copy(rollOverMesh.position);
 
@@ -216,6 +335,8 @@
               				voxelPosition.x = Math.floor( voxelPosition.x / 50 ) * 50 + 25;
               				voxelPosition.y = Math.floor( voxelPosition.y / 50 ) * 50 + 25;
               				voxelPosition.z = Math.floor( voxelPosition.z / 50 ) * 50 + 25;
+              				
+              				 
               				
               				if(isInteracting == true){
               				  
@@ -265,7 +386,24 @@
               				  if(cubAdded == false){
               				    cubAdded = true;
               				    cubMesh.position.y = 25;
-              				    scene.addObject( cubMesh );
+              				    
+              				    
+              				    if(ePressed == true){
+              				      cubMaterial = new THREE.MeshBasicMaterial( { color: 0x00569a } );
+              				      
+                    			  wayPoint = new THREE.Mesh( rollOverGeo, cubMaterial );
+                    			  wayPoint.position.copy(cubMesh.position);
+                    			  wayPoint.position.y=50;
+                    			  wayPoint.scale.y = 2;
+                    			  scene.addObject( wayPoint );
+                    			}else{
+                    			  cubMesh.position.y=27;
+                    			  scene.addObject( cubMesh );
+
+                    			}
+              				    
+              				    
+              				    
               				  }
               				}
               			}
@@ -282,7 +420,7 @@
         mouse3D = projector.unprojectVector( mouse2D.clone(), camera );
         ray.direction = mouse3D.subSelf( camera.position ).normalize();
         var intersects = ray.intersectScene( scene );
-        
+
         if ( intersects.length > 0 ) {
           intersector = getRealIntersector( intersects );
           if ( intersector ) {
@@ -294,7 +432,6 @@
         stats.update();
       }
       
-		</script> 
- 
+		</script>
 	</body>
 </html>

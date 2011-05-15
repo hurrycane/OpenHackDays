@@ -1,0 +1,189 @@
+* {
+	margin: 0;
+	padding: 0;	
+}
+
+body{
+	text-align: center;
+	background: #ebebeb;
+}
+
+div#wrapper{
+	width: 960px;
+	margin: 15px auto;
+	background: #FFFFFF;
+	text-align: left;
+}
+
+div#header{
+	background: url("images/bg.png") repeat-x;
+	height: 45px;
+}
+
+div#header ul#nav{
+	list-style-type: none;
+	float: left;
+	margin-top: 12px;;
+	margin-left: 10px;
+}
+
+div#header a#logo{
+	display: block;
+	float: left;
+}
+
+div#header img#delim{
+	
+	display: block;
+	float: left;
+}
+
+div#header ul#nav li{
+	float: left;
+	margin-right: 10px;
+}
+
+div#header ul#nav li a{
+	font-family: "Myriad Pro", "Verdana", "Helvetica";
+	text-decoration: none;
+	font-size: 9pt;
+	color: #5c5c5c;
+	text-transform: uppercase;
+}
+
+div#header ul#nav li.active a{
+	color: #000;
+	font-size: 10pt;
+	margin-top: 4px;
+	display: block;
+}
+
+div#header ul#nav li a:hover{
+	text-decoration: underline;
+}
+
+.delim, .btn{
+	margin-top: -12px;
+}
+
+.btn a{
+	display: block;
+	width: 25px;
+	height: 45px;
+	text-indent: -9999px;
+}
+
+.zoom_in{
+	background: url("images/zoom_in_out.png") no-repeat;
+}
+
+.zoom_in a:hover, .zoom_in_c{
+	background: url("images/zoom_in.png") no-repeat;	
+}
+
+.zoom_out{
+	background: url("images/zoom_out_out.png") no-repeat;
+}
+
+.zoom_out a:hover, .zoom_out_c{
+	background: url("images/zoom_out.png") no-repeat;	
+}
+
+.move{
+	background: url("images/move_out.png") no-repeat;
+}
+
+.move a:hover{
+	background: url("images/move.png") no-repeat;	
+}
+
+.waypoint{
+	background: url("images/waypoint_out.png") no-repeat;
+}
+
+.waypoint a:hover, .waypoint_c{
+	background: url("images/waypoint.png") no-repeat;	
+}
+
+#arrow img{
+	float: right;
+	margin-right: 10px;
+}
+
+#nav_right{
+	float: right;
+	list-style-type: none;
+}
+
+#contents{
+	clear: both;
+	text-align: left;
+}
+
+#contents{
+	padding-bottom: 10px;
+}
+
+#contents #dashboard{
+	margin-left: -10px;
+	float: left;
+}
+
+#miezu{
+clear: both;
+float: left;
+width: 730px;
+height: 530px;
+margin-bottom: 15px;
+border-right: 1px solid #dddddd;
+padding: 10px;
+}
+
+#centrului{
+	background-color: #FFCC99;
+	width: 725px;
+	height: 530px;
+}
+
+#people{
+  float:right;
+  background-color:#FFCC99;
+  width:200px;
+}
+
+.personOnline{
+  padding: 5px;
+  width:180px;
+  clear:both;
+}
+.personOnline img{
+  display: block;
+  padding: 5px;
+  border:1px solid #CCC;
+  float:left;
+  
+  width: 60px;
+}
+
+.personOnline p{
+  padding-top:10px;
+  font-family: "Myriad Pro", "Verdana", "Helvetica";
+  font-size:14px;
+  float:right;
+  
+  width: 100px;
+}
+
+.personOnline p strong{
+  color: #00569a;
+  font-size:16px;
+}
+
+<div class="personOnline">
+  <img src="http://a2.twimg.com/profile_images/1181590879/5101527405_59dd1be3b3_z_normal.png" alt="avatar"/>
+  <p><strong>Bogdan Gaza</strong> @ HackerLobby Waypoint #1</p>
+</div>
+
+#clearboth{
+clear: both;
+}
